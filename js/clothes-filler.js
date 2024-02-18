@@ -89,7 +89,6 @@ roupas.forEach((roupa) => {
     </div>
         `;
   div.querySelector(".provar-button").addEventListener("click", (e) => {
-    console.log(e.target.dataset);
     const tamanhos = JSON.parse(e.target.dataset.tamanhos);
     mostrarProvador(tamanhos);
   });

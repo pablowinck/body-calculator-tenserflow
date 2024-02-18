@@ -130,8 +130,6 @@ async function measureLoop() {
         );
         return accDist < currDist ? acc : curr;
       }, tamanhosQueServem[0]);
-      console.log({ tamanhosQueServem });
-      console.log({ melhorTamanho });
       if (tamanhosQueServem.length > 0) {
         let result = melhorTamanho.tamanho;
         if (tamanhosQueServem.length > 1) {
