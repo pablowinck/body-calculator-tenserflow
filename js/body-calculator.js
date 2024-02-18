@@ -1,12 +1,11 @@
 /**
- * Function to calculate measurements
- * @param {number} personHeight Height of the person in cm
- * @param {object} image Image element
- * @param {object} net PoseNet model
- * @returns Measurements and PoseNet score
+ * Função para calcular as medidas do corpo
+ * @param {number} personHeight Altura da pessoa em cm
+ * @param {object} image Elemento de imagem
+ * @param {object} net Modelo PoseNet
+ * @returns Medidas do corpo
  */
 async function calculateMeasurements(personHeight, image, net) {
-  // This validation is just if you want to use the function directly
   if (isNaN(personHeight) || personHeight <= 0) {
     alert("Por favor, insira uma altura válida em cm.");
     return;
@@ -22,8 +21,8 @@ async function calculateMeasurements(personHeight, image, net) {
 }
 
 /**
- * Function to load and use PoseNet
- * @param {object} image Image element
+ * Função para carregar e usar o PoseNet
+ * @param {object} image Elemento de imagem
  * @returns PoseNet keypoints
  */
 async function loadAndUsePoseNet(image) {
@@ -35,28 +34,23 @@ async function loadAndUsePoseNet(image) {
 }
 
 /**
- * Function to calculate body measurements
+ * Função para desenhar o canvas
  * @param {array} poseKeypoints PoseNet keypoints
- * @param {number} personHeightCm Height of the person in cm
- * @param {number} videoHeightPixels Height of the video in pixels
- * @returns Body measurements
+ * @param {number} personHeightCm Altura da pessoa em cm
+ * @param {number} videoHeightPixels Altura do vídeo em pixels
+ * @returns Medidas do corpo
  */
 function calculateBodyMeasurements(
   poseKeypoints,
   personHeightCm,
   videoHeightPixels
 ) {
-  // Calculate the scale from pixels to centimeters
   const scaleCmPerPixel = personHeightCm / videoHeightPixels;
-
-  // Function to calculate the distance between two points
   function distanceBetweenPoints(point1, point2) {
     return Math.sqrt(
       Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2)
     );
   }
-
-  // Find keypoints
   const leftShoulder = poseKeypoints.find(
     (point) => point.part === "leftShoulder"
   ).position;
@@ -69,22 +63,19 @@ function calculateBodyMeasurements(
   const rightHip = poseKeypoints.find(
     (point) => point.part === "rightHip"
   ).position;
-
-  // Calculate distances in pixels
+  // 1. Calcular a distância entre os ombros em pixels
   const shoulderDistancePixels = distanceBetweenPoints(
     leftShoulder,
     rightShoulder
   );
+  // 2. Calcular a distância entre os quadris em pixels
   const hipDistancePixels = distanceBetweenPoints(leftHip, rightHip);
-
-  // This calc needs to be improved, but it's a start
+  // 3. Calcular a estimativa da cintura em pixels (esse calculo é uma estimativa)
   const waistEstimatePixels = hipDistancePixels * 2 + hipDistancePixels * 0.4;
-
-  // Convert measurements from pixels to centimeters using the scale
+  // 4. Calcular as medidas em cm
   const shoulderDistanceCm = shoulderDistancePixels * scaleCmPerPixel;
   const waistEstimateCm = waistEstimatePixels * scaleCmPerPixel;
   const hipDistanceCm = hipDistancePixels * scaleCmPerPixel;
-
   return {
     shoulders: shoulderDistanceCm.toFixed(2),
     waist: waistEstimateCm.toFixed(2),

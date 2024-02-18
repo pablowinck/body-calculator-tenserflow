@@ -21,18 +21,14 @@ async function handleStartStop() {
   }
 }
 
-// Start the measurements when the button is clicked
 async function startMeasurements() {
   personHeightCm = parseFloat(document.getElementById("personHeightCm").value);
   if (isNaN(personHeightCm) || personHeightCm <= 0) {
     alert("Por favor, insira uma altura válida em cm.");
     return;
   }
-  // Load the PoseNet model
   net = await posenet.load();
-  // Start the webcam
   await setupCamera();
-  // Start the measurement loop
   started = true;
   measureLoop();
 }
@@ -56,7 +52,6 @@ async function setupCamera() {
   });
 }
 
-// The measurement loop
 async function measureLoop() {
   const video = document.getElementById("video");
   const canvas = document.getElementById("canvas");
@@ -145,22 +140,22 @@ async function measureLoop() {
           "Não foi possível encontrar um tamanho";
       }
     }
-    setTimeout(poseDetectionFrame, 50); // Wait for 5 seconds before the next measurement
+    setTimeout(poseDetectionFrame, 50); // 20 FPS
   }
   poseDetectionFrame();
 }
 
-// Draw the detected pose onto the canvas
+// Desenha a pose detectada no canvas
 function drawCanvas(pose, video, canvas, ctx) {
-  // Clear the canvas
+  // Limpa o canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  // Draw the video
+  // Desenha o video
   ctx.save();
-  ctx.scale(-1, 1); // Mirrors the canvas
-  ctx.translate(-canvas.width, 0); // Adjust for the mirrored translation
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height); // Use canvas dimensions
+  ctx.scale(-1, 1); // Espelha o canvas
+  ctx.translate(-canvas.width, 0); // Move o canvas para a esquerda
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height); // Desenha o video
   ctx.restore();
-  // Draw the pose
+  // Desenha os keypoints
   pose.keypoints.forEach((keypoint) => {
     if (keypoint.score > accuracyGoal) {
       const { y, x } = keypoint.position;
